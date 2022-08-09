@@ -8,11 +8,11 @@ import Database from 'better-sqlite3';
 const myArgs = process.argv.slice(2);
 
 // constants
+const SERVER_ADDRESS = "http://localhost";
 const REST_API_PORT = 80;
 const GRAPHQL_API_PORT = 4000;
 const GRID_X_MAX = 6;
 const GRID_Y_MAX = 4;
-
 
 // database
 const options = { 
@@ -21,7 +21,6 @@ const options = {
 const db = new Database('store.db', options);
 
 // variables
-
 let map = {
 	grid: new Array(GRID_Y_MAX).fill(0),
 	x: 0,
@@ -29,8 +28,8 @@ let map = {
 }
 
 for (var y = 0; y < GRID_Y_MAX; y++) {
-  map.grid[y] = new Array(GRID_X_MAX);
-  map.grid[y].fill(0);
+	map.grid[y] = new Array(GRID_X_MAX);
+	map.grid[y].fill(0);
 }
 
 console.log(myArgs);
@@ -61,12 +60,21 @@ const checkArgs = (args) => {
 	} else {
 		setPosition(map.x, map.y);
 	}
+	return "Moved to x=" + map.x + " y=" + map.y;
 }
 
 const commands = [
 	{ command: "", description: "Enter command", syntax: "", func: () => {} },
-	{ command: "h", description: "help", syntax: "h", func: () => { commands.forEach(c => { if(c.command.length > 0) { console.log(c.command + ' ' + c.description + ' usage: ' + c.syntax) } } ) } },
-	{ command: "c", description: "command", syntax: "c x y", func: (qargs) => { checkArgs(qargs); } },
+	{ command: "h", description: "help", syntax: "h", func: () => { 
+		let stringArray = [];
+		commands.forEach(c => { 
+			if(c.command.length > 0) { 
+				stringArray.push(c.command + ' ' + c.description + ' usage: ' + c.syntax); 
+			} 
+		})
+		return stringArray;
+	}},
+	{ command: "c", description: "command", syntax: "c x y", func: (qargs) => [checkArgs(qargs)] },
 ];
 
 const findCommand = (qargs) => {
@@ -74,16 +82,16 @@ const findCommand = (qargs) => {
 		const found = commands.find(element => element.command === qargs[0]);
 		if(typeof found !== 'undefined') {
 			qargs.shift();
-			found.func(qargs);
+			return found.func(qargs);
 		} else {
-			console.log("Command not found!");
+			return ["Command not found!"];
 		}
 	}
 }
 
 const checkCommandArgs = (commandArgs) => {
 	const qargs = commandArgs.split(/(\s+)/).filter( e => e.trim().length > 0);
-	findCommand(qargs);
+	return findCommand(qargs);
 }
 
 findCommand(myArgs);
@@ -92,65 +100,60 @@ findCommand(myArgs);
 const restapp = express();
 
 restapp.get('/', (req, res) => {
-  return res.send('movement');
+	return res.send('Be aware of Martian Robots!');
 });
 
 restapp.get('/command/:args', (req, res) => {
 	const args = req.params.args
 	console.log(args);
-	checkCommandArgs(args);
-	return res.send('movement');
+	return res.send(checkCommandArgs(args));
 });
-
 
 restapp.listen(REST_API_PORT);
 
-console.log('Running a REST API server at http://localhost:' + REST_API_PORT);
+console.log('Running a REST API server at ' + SERVER_ADDRESS + ':' + REST_API_PORT);
 
 // graphql
 const graphqlapp = express();
 
 const schema = buildSchema(`
-  type Query {
-    command(args: String): String
-  }
+	type Query {
+		command(args: String): [String]
+	}
 `);
 
 const root = {
 	command: ({args}) => {
-		console.log(args);
-		checkCommandArgs(args);
-		return 'You moved!';
+		return checkCommandArgs(args);
 	},
 };
 
 graphqlapp.use('/graphql', graphqlHTTP({
-  schema: schema,
-  rootValue: root,
-  graphiql: true,
+	schema: schema,
+	rootValue: root,
+	graphiql: true,
 }));
 
 graphqlapp.listen(GRAPHQL_API_PORT);
 
-console.log('Running a GraphQL API server at http://localhost:' + GRAPHQL_API_PORT + '/graphql');
+console.log('Running a GraphQL API server at ' + SERVER_ADDRESS + ':' + GRAPHQL_API_PORT + '/graphql');
 
 // readline
 const readline = rl.default;
 
 const rlp = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: true
+	input: process.stdin,
+	output: process.stdout,
+	terminal: true
 });
 
 let selected = 0;
 
 const loadPrompt = () => {
 	rlp.questionAsync(commands[selected].description + ': ').then(questionArgs => {
-		checkCommandArgs(questionArgs);
+		console.log(checkCommandArgs(questionArgs));
 		loadPrompt();
 	});
 }
 
 loadPrompt();
-
