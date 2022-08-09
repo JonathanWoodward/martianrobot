@@ -4,9 +4,9 @@ The surface of Mars can be modelled by a rectangular grid around which robots ar
 
 A robot position consists of a grid coordinate (a pair of integers: x-coordinate followed by y-coordinate) and an orientation (N, S, E, W for north, south, east, and west). A robot instruction is a string of the letters "L", "R", and "F" which represent, respectively,
 
-● Left: the robot turns left 90 degrees and remains on the current grid point.
-● Right: the robot turns right 90 degrees and remains on the current grid point.
-● Forward: the robot moves forward one grid point in the direction of the current orientation and maintains the same orientation.
+* Left: the robot turns left 90 degrees and remains on the current grid point.
+* Right: the robot turns right 90 degrees and remains on the current grid point.
+* Forward: the robot moves forward one grid point in the direction of the current orientation and maintains the same orientation.
 
 The direction North corresponds to the direction from grid point (x, y) to grid point (x, y+1).
 
@@ -28,18 +28,28 @@ All instruction strings will be less than 100 characters in length.
 
 For each robot position/instruction in the input, the output should indicate the final grid position and orientation of the robot. If a robot falls off the edge of the grid the word "LOST" should be printed after the position and orientation.
 
-Sample input
+### Sample input
+
 5 3
+
 1 1 E
+
 RFRFRFRF
+
 3 2 N
+
 FRRFLLFFRRFLL
+
 0 3 W
+
 LLFFFRFLFL
 
-Sample output
+### Sample output
+
 1 1 E
+
 3 3 N LOST
+
 4 2 N
 
 ## Installation
