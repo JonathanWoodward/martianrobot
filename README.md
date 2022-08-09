@@ -85,7 +85,7 @@ node index.js c 5 3
 To change position
 
 ```
-http://localhost:4000/graphql?query=%7B%20%0A%20%20command(args%3A%20%22c%201%202%22)%20%0A%7D
+http://localhost/command/c%201%201
 ```
 
 ## Usage GraphQL
