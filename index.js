@@ -13,6 +13,7 @@ const REST_API_PORT = 80;
 const GRAPHQL_API_PORT = 4000;
 const GRID_X_MAX = 6;
 const GRID_Y_MAX = 4;
+const ORIENTATIONS = [ 'N', 'E', 'S', 'W' ];
 
 // database
 const options = { 
@@ -20,11 +21,15 @@ const options = {
 };
 const db = new Database('store.db', options);
 
+const regx_orientation = new RegExp(/[NSEW]/);
+const regx_movement = new RegExp(/[LRF]/);
+
 // variables
 let map = {
 	grid: new Array(GRID_Y_MAX).fill(0),
 	x: 0,
-	y: 0
+	y: 0,
+	o: 'N'
 }
 
 for (var y = 0; y < GRID_Y_MAX; y++) {
@@ -38,29 +43,101 @@ const setGrid = (x, y, i) => {
 	map.grid[GRID_Y_MAX-y-1][x] = i;
 }
 
-const setPosition = (x, y) => {
-	if(x >= GRID_X_MAX) {
-		console.log("x is off map");
-	} else if(y >= GRID_Y_MAX) {
-		console.log("y is off map");
+const setPosition = (x, y, o) => {
+	if(x >= GRID_X_MAX || x < 0) {
+		return "x position is off map";
+	} else if(y >= GRID_Y_MAX || y < 0) {
+		return "y position is off map";
+	} else if(regx_orientation.test(o) === false) {
+		return "Orientation error, expected N S E or W";
 	} else {
 		setGrid(map.x, map.y, 0);
 		setGrid(x, y, 1);
 		map.x = x;
 		map.y = y;
+		map.o = o;
 		console.log(map);
+		return "Placed at x=" + map.x + " y=" + map.y + " o=" + map.o;
 	}
 }
 
-const checkArgs = (args) => {
-	if(args.length === 2) {
+const moveForward = () => {
+	switch(map.o)
+	{
+		case 'N': 
+			setPosition(map.x, map.y+1, map.o);
+		break;
+
+		case 'E': 
+			setPosition(map.x+1, map.y, map.o);
+		break;
+
+		case 'S': 
+			setPosition(map.x, map.y-1, map.o);
+		break;
+
+		case 'W': 
+			setPosition(map.x-1, map.y, map.o);
+		break;
+
+		default: break;
+	}
+}
+
+const processMovement = (m) => {
+	let index = ORIENTATIONS.indexOf(map.o);
+	switch(m)
+	{
+		case 'L':
+			if(index > 0) 
+				index--; 
+			else 
+				index = ORIENTATIONS.length - 1;
+		break;
+
+		case 'R':
+			if((ORIENTATIONS.length-1) > index) 
+				index++; 
+			else 
+				index = 0;
+		break;
+
+		case 'F':
+			moveForward();
+		break;
+
+		default: break;
+	}
+	map.o = ORIENTATIONS[index];
+}
+
+const processCommand = (args) => {
+	if(args.length === 3) {
 		const posx = parseInt(args[0]);
 		const posy = parseInt(args[1]);
-		setPosition(posx, posy);
+		const o = args[2].substring(0, 1);
+		return setPosition(posx, posy, o);
 	} else {
-		setPosition(map.x, map.y);
+		return "Missing args";
 	}
-	return "Moved to x=" + map.x + " y=" + map.y;
+}
+
+const processMovementArgs = (args) => {
+	if(args.length === 1) {
+		const characters = args[0];
+		for (let i = 0; i < characters.length; i++) {
+			const char = characters.charAt(i);
+			if(regx_movement.test(char)) {
+				console.log("handle char " + char)
+				processMovement(char);
+			} else {
+				console.log("error char " + char)
+			}
+		}
+		return "Got args"
+	} else {
+		return "Missing args";
+	}
 }
 
 const commands = [
@@ -74,7 +151,8 @@ const commands = [
 		})
 		return stringArray;
 	}},
-	{ command: "c", description: "command", syntax: "c x y", func: (qargs) => [checkArgs(qargs)] },
+	{ command: "c", description: "command", syntax: "c x y o", func: (qargs) => [processCommand(qargs)] },
+	{ command: "m", description: "movement", syntax: "m L", func: (qargs) => [processMovementArgs(qargs)] },
 ];
 
 const findCommand = (qargs) => {
@@ -83,10 +161,9 @@ const findCommand = (qargs) => {
 		if(typeof found !== 'undefined') {
 			qargs.shift();
 			return found.func(qargs);
-		} else {
-			return ["Command not found!"];
 		}
 	}
+	return ["Command not found!"];
 }
 
 const checkCommandArgs = (commandArgs) => {
