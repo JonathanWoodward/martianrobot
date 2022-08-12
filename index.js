@@ -64,23 +64,11 @@ const setPosition = (x, y, o) => {
 const moveForward = () => {
 	switch(map.o)
 	{
-		case 'N': 
-			setPosition(map.x, map.y+1, map.o);
-		break;
-
-		case 'E': 
-			setPosition(map.x+1, map.y, map.o);
-		break;
-
-		case 'S': 
-			setPosition(map.x, map.y-1, map.o);
-		break;
-
-		case 'W': 
-			setPosition(map.x-1, map.y, map.o);
-		break;
-
-		default: break;
+		case 'N': return setPosition(map.x, map.y+1, map.o);
+		case 'E': return setPosition(map.x+1, map.y, map.o);
+		case 'S': return setPosition(map.x, map.y-1, map.o);
+		case 'W': return setPosition(map.x-1, map.y, map.o);
+		default: return "Orientation not found";
 	}
 }
 
@@ -102,13 +90,11 @@ const processMovement = (m) => {
 				index = 0;
 		break;
 
-		case 'F':
-			moveForward();
-		break;
-
-		default: break;
+		case 'F': return moveForward();
+		default: return "Movement not found";
 	}
 	map.o = ORIENTATIONS[index];
+	return "Orientation changed to " + map.o;
 }
 
 const processCommand = (args) => {
@@ -125,18 +111,18 @@ const processCommand = (args) => {
 const processMovementArgs = (args) => {
 	if(args.length === 1) {
 		const characters = args[0];
+		let results = [];
 		for (let i = 0; i < characters.length; i++) {
 			const char = characters.charAt(i);
 			if(regx_movement.test(char)) {
-				console.log("handle char " + char)
-				processMovement(char);
+				results.push(processMovement(char));
 			} else {
-				console.log("error char " + char)
+				results.push("error char " + char);
 			}
 		}
-		return "Got args"
+		return results;
 	} else {
-		return "Missing args";
+		return ["Missing args"];
 	}
 }
 
@@ -152,7 +138,7 @@ const commands = [
 		return stringArray;
 	}},
 	{ command: "c", description: "command", syntax: "c x y o", func: (qargs) => [processCommand(qargs)] },
-	{ command: "m", description: "movement", syntax: "m L", func: (qargs) => [processMovementArgs(qargs)] },
+	{ command: "m", description: "movement", syntax: "m L", func: (qargs) => processMovementArgs(qargs) },
 ];
 
 const findCommand = (qargs) => {
