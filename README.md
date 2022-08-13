@@ -165,6 +165,64 @@ Results
 }
 ```
 
+To list previous inputs
+```
+{ 
+  command(args: "l") 
+}
+```
+Results
+```
+{
+  "data": {
+    "command": [
+      "2022-08-13 13:54:05 1: l ",
+      "2022-08-13 13:54:30 2: c 2 2 N",
+      "2022-08-13 13:54:39 3: m FFRFF",
+      "2022-08-13 13:54:55 4: l "
+    ]
+  }
+}
+```
+
+To see the output of the input
+```
+{ 
+  command(args: "o 3") 
+}
+```
+Results
+```
+{
+  "data": {
+    "command": [
+      "4 3 E"
+    ]
+  }
+}
+```
+
+To see the movement history of the input
+```
+{ 
+  command(args: "r 3") 
+}
+```
+Results
+```
+{
+  "data": {
+    "command": [
+      "2 3 N",
+      "2 4 N LOST",
+      "2 3 E",
+      "3 3 E",
+      "4 3 E"
+    ]
+  }
+}
+```
+
 ## Usage REST
 
 To change position
@@ -203,3 +261,9 @@ Enter command: h
 ## Project status
 
 Incomplete
+
+Further work to be added
+* Jest testing
+* Decide if to terminate when LOST and wait for robot to be placed again before accepting movements
+* Deploy it somewhere (heroku / your kubernetes cluster / any otherinteresting place).
+* Split index.js out into modules
