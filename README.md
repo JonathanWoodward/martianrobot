@@ -199,11 +199,12 @@ Result
 Enter command: h
 [
   'h help - usage: h',
-  'c command - usage: c x y o',
-  'm movement - usage: m LFRF',
-  'l list - usage: l',
-  'r results - usage: r id',
-  'p print grid - usage: p'
+  'c Command drop robot on the grid - usage: c x y o',
+  'm Make movements on the grid - usage: m LFRF',
+  'l List the input history - usage: l',
+  'r Show results by input id - usage: r id',
+  'p Print grid - usage: p',
+  'o Get the output by input id - usage: o id'
 ]
 ```
 
