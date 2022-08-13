@@ -260,7 +260,7 @@ Enter command: h
 
 ## Project status
 
-Incomplete
+Developed and tested with node v16.13.0
 
 Further work to be added
 * Jest testing.
