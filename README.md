@@ -268,3 +268,5 @@ Further work to be added
 * Deploy it somewhere (heroku / your kubernetes cluster / any otherinteresting place).
 * Split index.js out into modules.
 * Add instructions for docker and test on Linux VM.
+* Make a canvas user interface to show the robot moving rounf the grid.
+* Add multiple robots onto the grid and allow selecting which robot is in use.
