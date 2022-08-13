@@ -99,12 +99,6 @@ Result
 
 ## Usage GraphQL
 
-To start the app with a position in the upper right
-
-```bash
-node index.js
-```
-
 Open the GraphiQL playground in a web browser (tested in Chrome)
 
 ```
@@ -172,12 +166,6 @@ Results
 ```
 
 ## Usage REST
-
-To start the app with a position in the upper right
-
-```bash
-node index.js
-```
 
 To change position
 ```
