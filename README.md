@@ -71,7 +71,30 @@ node index.js
 To start the app with a position in the upper right
 
 ```bash
-node index.js c 5 3
+node index.js c 5 3 S
+```
+or
+```bash
+$ node index.js
+Enter command: c 5 3 S
+```
+Result
+```bash
+[ '5 3 S' ]
+```
+
+To see where you are on the grid
+```bash
+Enter command: p
+```
+Result
+```bash
+[ 
+  '00000S', 
+  '000000', 
+  '000000', 
+  '000000' 
+]
 ```
 
 ## Usage REST
@@ -93,13 +116,35 @@ http://localhost/command/c%201%201
 To start the app with a position in the upper right
 
 ```bash
-node index.js c 5 3
+node index.js
 ```
 
-To change position
+Open the GraphiQL playground in a web browser (tested in Chrome)
 
 ```
-http://localhost:4000/graphql?query=%7B%20%0A%20%20command(args%3A%20%22c%201%202%22)%20%0A%7D
+http://localhost:4000/graphql
+```
+
+Here you can execute queries and see the results
+
+To print the grid
+```
+{ 
+  command(args: "p") 
+}
+```
+Results
+```
+{
+  "data": {
+    "command": [
+      "00000S",
+      "000000",
+      "000000",
+      "000000"
+    ]
+  }
+}
 ```
 
 ## Project status
