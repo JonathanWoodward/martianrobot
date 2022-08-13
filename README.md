@@ -243,7 +243,7 @@ Result
 ["00000S","000000","000000","000000"]
 ```
 
-# Commands
+## Commands
 
 ```bash
 Enter command: h
