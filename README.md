@@ -263,7 +263,8 @@ Enter command: h
 Incomplete
 
 Further work to be added
-* Jest testing
-* Decide if to terminate when LOST and wait for robot to be placed again before accepting movements
+* Jest testing.
+* Decide if to terminate when LOST and wait for robot to be placed again before accepting movements.
 * Deploy it somewhere (heroku / your kubernetes cluster / any otherinteresting place).
-* Split index.js out into modules
+* Split index.js out into modules.
+* Add instructions for docker and test on Linux VM.
