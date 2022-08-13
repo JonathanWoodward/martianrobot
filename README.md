@@ -171,6 +171,10 @@ To change position
 ```
 http://localhost/command/c%205%203%20S
 ```
+Result
+```
+["5 3 S"]
+```
 
 To print the grid
 ```
