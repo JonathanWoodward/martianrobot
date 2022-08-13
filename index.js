@@ -18,7 +18,7 @@ const INSTRUCTION_STRING_MAX = 100;
 
 // database
 const options = { 
-	verbose: (message) => { console.log(message) } 
+	verbose: (message) => { /*console.log(message)*/ } 
 };
 const BetterSqlite3 = new Database('store.db', options);
 
@@ -28,6 +28,10 @@ const createTableSQL = (query) => {
 
 const insertSQL = (query, ...parameters) => {
 	return BetterSqlite3.prepare(query).run(...parameters);
+}
+
+const fetchSQL = (query, ...parameters) => {
+	return BetterSqlite3.prepare(query).all(...parameters);
 }
 
 createTableSQL("CREATE TABLE IF NOT EXISTS inputs(" +
@@ -66,8 +70,6 @@ for (var y = 0; y < GRID_Y_MAX; y++) {
 	map.grid[y] = new Array(GRID_X_MAX);
 	map.grid[y].fill(0);
 }
-
-console.log(myArgs);
 
 const getTimestamp = () => {
 	return new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -114,7 +116,6 @@ const setPosition = (id, x, y, o) => {
 		map.x = x;
 		map.y = y;
 		map.o = o;
-		console.log(map);
 		return newPosition(id);
 	}
 }
@@ -190,19 +191,77 @@ const processMovementArgs = (id, args) => {
 	}
 }
 
+const getPastRuns = (id, args) => {
+	const rows = fetchSQL('SELECT * FROM inputs');
+	const results = [];
+	for (let row of rows) {
+		results.push(row.timestamp + " " +
+			row.id + ": " + 
+			row.type + " " +
+			row.instruction
+		);
+	}
+	return results;
+}
+
+const getRunHistory = (id, args) => {
+	if(args.length === 1) {
+		const id = parseInt(args[0]);
+		const rows = fetchSQL('SELECT * FROM movements WHERE input=?', id);
+		const results = [];
+		for (let row of rows) {
+			results.push(row.result);
+		}
+		return results;
+	} else {
+		return ["ID required"];
+	}
+}
+
+const getOutput = (id, args) => {
+	if(args.length === 1) {
+		const id = parseInt(args[0]);
+		const rows = fetchSQL('SELECT * FROM outputs WHERE input=?', id);
+		const results = [];
+		for (let row of rows) {
+			results.push(row.result);
+		}
+		return results;
+	} else {
+		return ["ID required"];
+	}
+}
+
+const printGrid = (id, args) => {
+	let results = [];
+	for (var y = 0; y < GRID_Y_MAX; y++) {
+		let row = "";
+		const gridY = map.grid[y];
+		for (var x = 0; x < GRID_X_MAX; x++) {
+			row += gridY[x] === 1 ? map.o : "0";
+		}
+		results.push(row);
+	}
+	return results;
+}
+
 const commands = [
 	{ command: "", description: "Enter command", syntax: "", func: () => {} },
 	{ command: "h", description: "help", syntax: "h", func: () => { 
 		let stringArray = [];
 		commands.forEach(c => { 
 			if(c.command.length > 0) { 
-				stringArray.push(c.command + ' ' + c.description + ' usage: ' + c.syntax); 
+				stringArray.push(c.command + ' ' + c.description + ' - usage: ' + c.syntax); 
 			} 
 		})
 		return stringArray;
 	}},
-	{ command: "c", description: "command", syntax: "c x y o", func: (id, qargs) => processCommand(id, qargs) },
-	{ command: "m", description: "movement", syntax: "m LFRF", func: (id, qargs) => processMovementArgs(id, qargs) },
+	{ command: "c", description: "Command drop robot on the grid", syntax: "c x y o", func: (id, qargs) => processCommand(id, qargs) },
+	{ command: "m", description: "Make movements on the grid", syntax: "m LFRF", func: (id, qargs) => processMovementArgs(id, qargs) },
+	{ command: "l", description: "List the input history", syntax: "l", func: (id, qargs) => getPastRuns(id, qargs) },
+	{ command: "r", description: "Show results by input id", syntax: "r id", func: (id, qargs) => getRunHistory(id, qargs) },
+	{ command: "p", description: "Print grid", syntax: "p", func: (id, qargs) => printGrid(id, qargs) },
+	{ command: "o", description: "Get the output by input id", syntax: "o id", func: (id, qargs) => getOutput(id, qargs) },
 ];
 
 const getInstructionFromArgs = (...args) => {
@@ -262,7 +321,6 @@ restapp.get('/', (req, res) => {
 
 restapp.get('/command/:args', (req, res) => {
 	const args = req.params.args
-	console.log(args);
 	return res.send(checkCommandArgs(args));
 });
 
@@ -312,5 +370,8 @@ const loadPrompt = () => {
 		loadPrompt();
 	});
 }
+
+// set default position in grid
+setGrid(map.x, map.y, 1);
 
 loadPrompt();
