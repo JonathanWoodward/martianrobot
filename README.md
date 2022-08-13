@@ -97,20 +97,6 @@ Result
 ]
 ```
 
-## Usage REST
-
-To start the app with a position in the upper right
-
-```bash
-node index.js c 5 3
-```
-
-To change position
-
-```
-http://localhost/command/c%201%201
-```
-
 ## Usage GraphQL
 
 To start the app with a position in the upper right
@@ -145,6 +131,80 @@ Results
     ]
   }
 }
+```
+
+To drop the robot on a position
+```
+{ 
+  command(args: "c 5 3 S") 
+}
+```
+Results
+```
+{
+  "data": {
+    "command": [
+      "5 3 S"
+    ]
+  }
+}
+```
+
+To make a movement
+```
+{ 
+  command(args: "m FFRFF") 
+}
+```
+Results
+```
+{
+  "data": {
+    "command": [
+      "5 2 S",
+      "5 1 S",
+      "5 1 W",
+      "4 1 W",
+      "3 1 W"
+    ]
+  }
+}
+```
+
+## Usage REST
+
+To start the app with a position in the upper right
+
+```bash
+node index.js
+```
+
+To change position
+```
+http://localhost/command/c%205%203%20S
+```
+
+To print the grid
+```
+http://localhost/command/p
+```
+Result
+```
+["00000S","000000","000000","000000"]
+```
+
+# Commands
+
+```bash
+Enter command: h
+[
+  'h help - usage: h',
+  'c command - usage: c x y o',
+  'm movement - usage: m LFRF',
+  'l list - usage: l',
+  'r results - usage: r id',
+  'p print grid - usage: p'
+]
 ```
 
 ## Project status
