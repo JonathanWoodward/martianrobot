@@ -15,6 +15,7 @@ const GRID_X_MAX = 6;
 const GRID_Y_MAX = 4;
 const ORIENTATIONS = [ 'N', 'E', 'S', 'W' ];
 const INSTRUCTION_STRING_MAX = 100;
+const COORDINATE_VALUE_MAX = 50;
 
 // database
 const options = { 
@@ -161,6 +162,9 @@ const processCommand = (id, args) => {
 		const posx = parseInt(args[0]);
 		const posy = parseInt(args[1]);
 		const o = args[2].substring(0, 1);
+		if(posx > COORDINATE_VALUE_MAX || posy > COORDINATE_VALUE_MAX) {
+			return ["Coordinate max is " + COORDINATE_VALUE_MAX]
+		}
 		return [setPosition(id, posx, posy, o)];
 	} else {
 		return ["Missing args"];
