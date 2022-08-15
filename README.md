@@ -270,3 +270,4 @@ Further work to be added
 * Add instructions for docker and test on Linux VM.
 * Make a canvas user interface to show the robot moving rounf the grid.
 * Add multiple robots onto the grid and allow selecting which robot is in use.
+* Split out the REST and GQL API to be cleaner and not just use the command line string as a command
