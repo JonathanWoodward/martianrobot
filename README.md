@@ -1,3 +1,17 @@
+## Project status
+
+Developed and tested with node v16.13.0
+
+Further work to be added
+* Jest testing.
+* Decide if to terminate when LOST and wait for robot to be placed again before accepting movements.
+* Deploy it somewhere (heroku / your kubernetes cluster / any otherinteresting place).
+* Split index.js out into modules.
+* Add instructions for docker and test on Linux VM.
+* Make a canvas user interface to show the robot moving rounf the grid.
+* Add multiple robots onto the grid and allow selecting which robot is in use.
+* Split out the REST and GQL API to be cleaner and not just use the command line string as a command.
+
 ## Martian Robots
 
 The surface of Mars can be modelled by a rectangular grid around which robots are able to move according to instructions provided from Earth.
@@ -257,16 +271,3 @@ Enter command: h
   'o Get the output by input id - usage: o id'
 ]
 ```
-
-## Project status
-
-Developed and tested with node v16.13.0
-
-Further work to be added
-* Jest testing.
-* Decide if to terminate when LOST and wait for robot to be placed again before accepting movements.
-* Deploy it somewhere (heroku / your kubernetes cluster / any otherinteresting place).
-* Split index.js out into modules.
-* Add instructions for docker and test on Linux VM.
-* Make a canvas user interface to show the robot moving rounf the grid.
-* Add multiple robots onto the grid and allow selecting which robot is in use.
